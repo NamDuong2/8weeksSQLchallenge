@@ -44,3 +44,25 @@ HAVING tb1.ranking = 1
 | ----------- | ------------ |
 | A           | cury         |  
 | B           | sushi        |  
+
+### 7:  Which item was purchased just before the customer became a member?
+````sql
+WITH tb1 AS 
+(SELECT s.customer_id, m.product_name, s.order_date, RANK() OVER(PARTITION BY s.customer_id ORDER BY (mem.join_date - s.order_date)) as ranking
+ FROM dannys_diner.sales s
+ INNER JOIN dannys_diner.menu m ON s.product_id = m.product_id
+ INNER JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id 
+ WHERE (mem.join_date - s.order_date) > 0)
+ 
+SELECT tb1.customer_id, tb1.product_name
+FROM tb1
+GROUP BY tb1.customer_id, tb1.product_name, tb1.ranking
+HAVING tb1.ranking = 1
+````
+
+#### Answer:
+| customer_id | product_name | 
+| ----------- | ------------ |
+| A           | cury         |  
+| A           | sushi        |
+| B           | sushi        |
