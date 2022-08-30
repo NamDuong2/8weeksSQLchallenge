@@ -67,7 +67,7 @@ HAVING tb1.ranking = 1
 | A           | sushi        |
 | B           | sushi        |
 
-### 7:  What is the total items and amount spent for each member before they became a member?
+### 8:  What is the total items and amount spent for each member before they became a member?
 ````sql
 SELECT s.customer_id, COUNT(s.product_id) total_items, SUM(m.price) total_amount
 FROM dannys_diner.sales s
@@ -84,5 +84,23 @@ ORDER BY s.customer_id
 | B           | 3            |  40          |
 
 #### Note: 
-- Total items as I means including duplicate items -> use COUNT(s.product_id)
-- If it means excluding duplicate items -> use COUNT(DISTINCT s.product_id)
+- total_items as I mean including duplicate items -> use COUNT(s.product_id)
+- If it mean excluding duplicate items -> use COUNT(DISTINCT s.product_id)
+
+### 9: If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+````sql
+SELECT s.customer_id, 
+	   SUM(CASE WHEN s.product_id = 1
+            THEN m.price*10*2
+            ELSE m.price*10 END) total_point
+FROM dannys_diner.sales s
+INNER JOIN dannys_diner.menu m ON s.product_id = m.product_id
+GROUP BY s.customer_id
+ORDER BY s.customer_id
+````
+#### Answer:
+| customer_id | total_point  | 
+| ----------- | ------------ | 
+| A           | 860          | 
+| B           | 940          | 
+| C           | 360          | 
