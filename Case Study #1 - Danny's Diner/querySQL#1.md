@@ -66,3 +66,23 @@ HAVING tb1.ranking = 1
 | A           | cury         |  
 | A           | sushi        |
 | B           | sushi        |
+
+### 7:  What is the total items and amount spent for each member before they became a member?
+````sql
+SELECT s.customer_id, COUNT(s.product_id) total_items, SUM(m.price) total_amount
+FROM dannys_diner.sales s
+INNER JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
+INNER JOIN dannys_diner.menu m ON s.product_id = m.product_id
+WHERE (mem.join_date - s.order_date) > 0
+GROUP BY s.customer_id
+ORDER BY s.customer_id
+````
+#### Answer:
+| customer_id | total_items  | total_amount |
+| ----------- | ------------ | ------------ |
+| A           | 2            |  25          |
+| B           | 3            |  40          |
+
+#### Note: 
+- Total items as I means including duplicate items -> use COUNT(s.product_id)
+- If it means excluding duplicate items -> use COUNT(DISTINCT s.product_id)
