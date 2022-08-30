@@ -129,7 +129,7 @@ ORDER BY s.customer_id
 
 ## BONUS QUESTION
 ````sql
-SELECT s.customer_id, s.order_date, m.product_name, m.price,
+SELECT s.customer_id, TO_CHAR(s.order_date, 'yyyy-mm-dd') order_date, m.product_name, m.price,
 	   (CASE WHEN (s.order_date - mem.join_date) < 0 THEN 'N'
              WHEN (s.order_date - mem.join_date) >= 0 THEN 'Y'
              ELSE 'N' END) member
@@ -138,21 +138,22 @@ INNER JOIN dannys_diner.menu m ON s.product_id = m.product_id
 LEFT JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
 ````
 #### Answer:
-| customer_id | order_date               | product_name | price | member |
-| ----------- | ------------------------ | ------------ | ----- | ------ |
-| A           | 2021-01-07T00:00:00.000Z | curry        | 15    | Y      |
-| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      |
-| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      |
-| A           | 2021-01-10T00:00:00.000Z | ramen        | 12    | Y      |
-| A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |
-| A           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |
-| B           | 2021-01-04T00:00:00.000Z | sushi        | 10    | N      |
-| B           | 2021-01-11T00:00:00.000Z | sushi        | 10    | Y      |
-| B           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |
-| B           | 2021-01-02T00:00:00.000Z | curry        | 15    | N      |
-| B           | 2021-01-16T00:00:00.000Z | ramen        | 12    | Y      |
-| B           | 2021-02-01T00:00:00.000Z | ramen        | 12    | Y      |
-| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |
-| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |
-| C           | 2021-01-07T00:00:00.000Z | ramen        | 12    | N      |
+| customer_id | order_date | product_name | price | member |
+| ----------- | ---------- | ------------ | ----- | ------ |
+| A           | 2021-01-07 | curry        | 15    | Y      |
+| A           | 2021-01-11 | ramen        | 12    | Y      |
+| A           | 2021-01-11 | ramen        | 12    | Y      |
+| A           | 2021-01-10 | ramen        | 12    | Y      |
+| A           | 2021-01-01 | sushi        | 10    | N      |
+| A           | 2021-01-01 | curry        | 15    | N      |
+| B           | 2021-01-04 | sushi        | 10    | N      |
+| B           | 2021-01-11 | sushi        | 10    | Y      |
+| B           | 2021-01-01 | curry        | 15    | N      |
+| B           | 2021-01-02 | curry        | 15    | N      |
+| B           | 2021-01-16 | ramen        | 12    | Y      |
+| B           | 2021-02-01 | ramen        | 12    | Y      |
+| C           | 2021-01-01 | ramen        | 12    | N      |
+| C           | 2021-01-01 | ramen        | 12    | N      |
+| C           | 2021-01-07 | ramen        | 12    | N      |
+
 
