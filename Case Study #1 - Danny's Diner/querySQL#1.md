@@ -109,8 +109,8 @@ ORDER BY s.customer_id
 ````sql
 SELECT s.customer_id, 
 	   SUM(CASE WHEN (s.order_date - mem.join_date) >= 0 AND (s.order_date - mem.join_date) <= 6 THEN m.price*10*2
-                WHEN s.product_id = 1 THEN m.price*10*2
-           		ELSE m.price*10 END) total_point
+                    WHEN s.product_id = 1 THEN m.price*10*2
+           	    ELSE m.price*10 END) total_point
 FROM dannys_diner.sales s
 INNER JOIN dannys_diner.menu m ON s.product_id = m.product_id
 INNER JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
@@ -123,3 +123,6 @@ ORDER BY s.customer_id
 | ----------- | ------------ | 
 | A           | 1370         | 
 | B           | 820          | 
+
+#### Note: 
+- First week after a customer joins the program (including their join date) means "order_date" - "join_date" >= 0 and <=6 (7 days a week)
