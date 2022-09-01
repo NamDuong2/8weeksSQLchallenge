@@ -156,4 +156,39 @@ LEFT JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
 | C           | 2021-01-01 | ramen        | 12    | N      |
 | C           | 2021-01-07 | ramen        | 12    | N      |
 
+````sql
+    WITH tb1 AS (
+      SELECT s.customer_id, TO_CHAR(s.order_date, 'yyyy-mm-dd') order_date, m.product_name, m.price,
+             (CASE WHEN (s.order_date - mem.join_date) < 0 THEN 'N'
+                   WHEN (s.order_date - mem.join_date) >= 0 THEN 'Y'
+                   ELSE 'N' END) member
+      FROM dannys_diner.sales s
+      INNER JOIN dannys_diner.menu m ON s.product_id = m.product_id
+      LEFT JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
+    )
+    
+    SELECT *, 
+    	   CASE WHEN member = 'N' THEN NULL
+           		ELSE (RANK() OVER(PARTITION BY customer_id, member ORDER BY order_date)) END ranking
+    FROM tb1;
+````
+#### Answer:
+| customer_id | order_date | product_name | price | member | ranking |
+| ----------- | ---------- | ------------ | ----- | ------ | ------- |
+| A           | 2021-01-01 | sushi        | 10    | N      |         |
+| A           | 2021-01-01 | curry        | 15    | N      |         |
+| A           | 2021-01-07 | curry        | 15    | Y      | 1       |
+| A           | 2021-01-10 | ramen        | 12    | Y      | 2       |
+| A           | 2021-01-11 | ramen        | 12    | Y      | 3       |
+| A           | 2021-01-11 | ramen        | 12    | Y      | 3       |
+| B           | 2021-01-01 | curry        | 15    | N      |         |
+| B           | 2021-01-02 | curry        | 15    | N      |         |
+| B           | 2021-01-04 | sushi        | 10    | N      |         |
+| B           | 2021-01-11 | sushi        | 10    | Y      | 1       |
+| B           | 2021-01-16 | ramen        | 12    | Y      | 2       |
+| B           | 2021-02-01 | ramen        | 12    | Y      | 3       |
+| C           | 2021-01-01 | ramen        | 12    | N      |         |
+| C           | 2021-01-01 | ramen        | 12    | N      |         |
+| C           | 2021-01-07 | ramen        | 12    | N      |         |
+
 
