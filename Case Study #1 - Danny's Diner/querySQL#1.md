@@ -128,6 +128,7 @@ ORDER BY s.customer_id
 - First week after a customer joins the program (including their join date) means "order_date" - "join_date" >= 0 and <=6 (7 days a week)
 
 ## BONUS QUESTION
+### Join All The Things
 ````sql
 SELECT s.customer_id, TO_CHAR(s.order_date, 'yyyy-mm-dd') order_date, m.product_name, m.price,
 	   (CASE WHEN (s.order_date - mem.join_date) < 0 THEN 'N'
@@ -156,6 +157,7 @@ LEFT JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
 | C           | 2021-01-01 | ramen        | 12    | N      |
 | C           | 2021-01-07 | ramen        | 12    | N      |
 
+### Rank All The Things
 ````sql
     WITH tb1 AS (
       SELECT s.customer_id, TO_CHAR(s.order_date, 'yyyy-mm-dd') order_date, m.product_name, m.price,
@@ -175,20 +177,20 @@ LEFT JOIN dannys_diner.members mem ON s.customer_id = mem.customer_id
 #### Answer:
 | customer_id | order_date | product_name | price | member | ranking |
 | ----------- | ---------- | ------------ | ----- | ------ | ------- |
-| A           | 2021-01-01 | sushi        | 10    | N      |         |
-| A           | 2021-01-01 | curry        | 15    | N      |         |
+| A           | 2021-01-01 | sushi        | 10    | N      | null    |
+| A           | 2021-01-01 | curry        | 15    | N      | null    |
 | A           | 2021-01-07 | curry        | 15    | Y      | 1       |
 | A           | 2021-01-10 | ramen        | 12    | Y      | 2       |
 | A           | 2021-01-11 | ramen        | 12    | Y      | 3       |
 | A           | 2021-01-11 | ramen        | 12    | Y      | 3       |
-| B           | 2021-01-01 | curry        | 15    | N      |         |
-| B           | 2021-01-02 | curry        | 15    | N      |         |
-| B           | 2021-01-04 | sushi        | 10    | N      |         |
+| B           | 2021-01-01 | curry        | 15    | N      | null    |
+| B           | 2021-01-02 | curry        | 15    | N      | null    |
+| B           | 2021-01-04 | sushi        | 10    | N      | null    |
 | B           | 2021-01-11 | sushi        | 10    | Y      | 1       |
 | B           | 2021-01-16 | ramen        | 12    | Y      | 2       |
 | B           | 2021-02-01 | ramen        | 12    | Y      | 3       |
-| C           | 2021-01-01 | ramen        | 12    | N      |         |
-| C           | 2021-01-01 | ramen        | 12    | N      |         |
-| C           | 2021-01-07 | ramen        | 12    | N      |         |
+| C           | 2021-01-01 | ramen        | 12    | N      | null    |
+| C           | 2021-01-01 | ramen        | 12    | N      | null    |
+| C           | 2021-01-07 | ramen        | 12    | N      | null    |
 
 
