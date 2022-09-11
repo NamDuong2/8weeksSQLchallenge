@@ -24,10 +24,10 @@ FROM pizza_runner.customer_orders co
 
 ### 3. How many successful orders were delivered by each runner?
 ````sql
-    SELECT ro.runner_id, COUNT(DISTINCT ro.order_id) successfull_order_total
-    FROM pizza_runner.runner_orders ro
-    WHERE ro.distance != 'null'
-    GROUP BY ro.runner_id;
+SELECT ro.runner_id, COUNT(DISTINCT ro.order_id) successfull_order_total
+FROM pizza_runner.runner_orders ro
+WHERE ro.distance != 'null'
+GROUP BY ro.runner_id;
 ````
 **Answer:**
 | runner_id | successfull_order_total |
