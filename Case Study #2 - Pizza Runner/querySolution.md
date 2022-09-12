@@ -47,7 +47,7 @@ WITH successful_order AS (
     
 SELECT
     pn.pizza_name,
-	COUNT(co.pizza_id) count_pizza
+    COUNT(co.pizza_id) count_pizza
 FROM pizza_runner.customer_orders co 
 INNER JOIN  successful_order so
 ON co.order_id = so.order_id 
@@ -73,6 +73,7 @@ ON co.pizza_id = pn.pizza_id
 GROUP BY co.customer_id, pn.pizza_name
 ORDER BY co.customer_id;
 ````
+**Answer:**
 | customer_id | pizza_name | count_pizza |
 | ----------- | ---------- | ----------- |
 | 101         | Meatlovers | 2           |
@@ -84,4 +85,23 @@ ORDER BY co.customer_id;
 | 104         | Meatlovers | 3           |
 | 105         | Vegetarian | 1           |
 
+### 6. What was the maximum number of pizzas delivered in a single order?
+````sql
+WITH pizza_per_order AS (
+  SELECT
+      ro.order_id,
+      COUNT(co.pizza_id) count_pizza
+  FROM pizza_runner.runner_orders ro
+  INNER JOIN pizza_runner.customer_orders co
+  ON ro.order_id = co.order_id
+  WHERE ro.distance != 'null'
+  GROUP BY ro.order_id
+)
 
+SELECT MAX(count_pizza) max_pizza
+FROM pizza_per_order
+````
+**Answer:**
+| max_pizza |  
+| --------- | 
+| 3	    | 
