@@ -35,3 +35,36 @@ GROUP BY ro.runner_id;
 | 1         | 4                       |
 | 2         | 3                       |
 | 3         | 1                       |
+
+
+### 4. How many of each type of pizza was delivered?
+````sql
+WITH successful_order AS (
+   SELECT ro.order_id
+   FROM pizza_runner.runner_orders ro
+   WHERE ro.distance != 'null'
+)
+    
+SELECT
+  	co.order_id,
+    co.pizza_id,
+    COUNT(co.pizza_id) count_pizza
+FROM pizza_runner.customer_orders co 
+INNER JOIN  successful_order so
+ON co.order_id = so.order_id 
+GROUP BY co.order_id, co.pizza_id
+ORDER BY co.order_id;
+````
+**Answer:**
+| order_id | pizza_id | count_pizza |
+| -------- | -------- | ----------- |
+| 1        | 1        | 1           |
+| 2        | 1        | 1           |
+| 3        | 2        | 1           |
+| 3        | 1        | 1           |
+| 4        | 1        | 2           |
+| 4        | 2        | 1           |
+| 5        | 1        | 1           |
+| 7        | 2        | 1           |
+| 8        | 1        | 1           |
+| 10       | 1        | 2           |
