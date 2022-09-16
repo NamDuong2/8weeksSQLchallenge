@@ -34,7 +34,6 @@ FROM pizza_runner.runner_orders ro
 
 ### TABLE: customer_orders
 ````sql
-    customer_orders_transformed AS (
     SELECT 
       order_id,
       customer_id,
