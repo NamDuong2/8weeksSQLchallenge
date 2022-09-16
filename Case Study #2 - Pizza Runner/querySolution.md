@@ -4,8 +4,8 @@
 ### 1. How many pizzas were ordered?
 
 ````sql
-SELECT COUNT(co.pizza_id) total_pizza
-FROM pizza_runner.customer_orders co
+SELECT COUNT(cot.pizza_id) total_pizza
+FROM pizza_runner.customer_orders_transformed cot
 ````
 **Answer:**
 | total_pizza |
@@ -14,8 +14,8 @@ FROM pizza_runner.customer_orders co
 
 ### 2. How many unique customer orders were made? 
 ````sql
-SELECT COUNT(DISTINCT co.order_id) unique_order_total
-FROM pizza_runner.customer_orders co
+SELECT COUNT(DISTINCT cot.order_id) unique_order_total
+FROM pizza_runner.customer_orders_transformed cot
 ````
 **Answer:**
 |unique_order_total|
@@ -24,10 +24,10 @@ FROM pizza_runner.customer_orders co
 
 ### 3. How many successful orders were delivered by each runner?
 ````sql
-SELECT ro.runner_id, COUNT(DISTINCT ro.order_id) successfull_order_total
-FROM pizza_runner.runner_orders ro
-WHERE ro.distance != 'null'
-GROUP BY ro.runner_id;
+SELECT rot.runner_id, COUNT(DISTINCT rot.order_id) successfull_order_total
+FROM pizza_runner.runner_orders_transformed rot
+WHERE rot.distance != ''
+GROUP BY rot.runner_id;
 ````
 **Answer:**
 | runner_id | successfull_order_total |
@@ -40,19 +40,19 @@ GROUP BY ro.runner_id;
 ### 4. How many of each type of pizza was delivered?
 ````sql
 WITH successful_order AS (
-   SELECT ro.order_id
-   FROM pizza_runner.runner_orders ro
-   WHERE ro.distance != 'null'
+   SELECT rot.order_id
+   FROM pizza_runner.runner_orders_transformed rot
+   WHERE rot.distance != ''
 )
     
 SELECT
     pn.pizza_name,
-    COUNT(co.pizza_id) count_pizza
-FROM pizza_runner.customer_orders co 
+    COUNT(cot.pizza_id) count_pizza
+FROM pizza_runner.customer_orders_transformed cot 
 INNER JOIN  successful_order so
-ON co.order_id = so.order_id 
+ON cot.order_id = so.order_id 
 INNER JOIN pizza_runner.pizza_names pn
-ON co.pizza_id = pn.pizza_id
+ON cot.pizza_id = pn.pizza_id
 GROUP BY pn.pizza_name
 ````
 **Answer:**
@@ -64,14 +64,14 @@ GROUP BY pn.pizza_name
 ### 5. How many Vegetarian and Meatlovers were ordered by each customer?
 ````sql
 SELECT
-    co.customer_id,
+    cot.customer_id,
     pn.pizza_name,
     COUNT(pn.pizza_name) count_pizza
-FROM pizza_runner.customer_orders co 
+FROM pizza_runner.customer_orders_transformed cot 
 INNER JOIN  pizza_runner.pizza_names pn
-ON co.pizza_id = pn.pizza_id 
-GROUP BY co.customer_id, pn.pizza_name
-ORDER BY co.customer_id;
+ON cot.pizza_id = pn.pizza_id 
+GROUP BY cot.customer_id, pn.pizza_name
+ORDER BY cot.customer_id;
 ````
 **Answer:**
 | customer_id | pizza_name | count_pizza |
@@ -89,13 +89,13 @@ ORDER BY co.customer_id;
 ````sql
 WITH pizza_per_order AS (
   SELECT
-      ro.order_id,
-      COUNT(co.pizza_id) count_pizza
-  FROM pizza_runner.runner_orders ro
-  INNER JOIN pizza_runner.customer_orders co
-  ON ro.order_id = co.order_id
-  WHERE ro.distance != 'null'
-  GROUP BY ro.order_id
+      rot.order_id,
+      COUNT(cot.pizza_id) count_pizza
+  FROM pizza_runner.runner_orders_transformed rot
+  INNER JOIN pizza_runner.customer_orders_transformed cot
+  ON rot.order_id = cot.order_id
+  WHERE rot.distance != ''
+  GROUP BY rot.order_id
 )
 
 SELECT MAX(count_pizza) max_pizza
@@ -105,3 +105,47 @@ FROM pizza_per_order
 | max_pizza |  
 | --------- | 
 | 3	    | 
+
+### 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+````sql
+SELECT cot.customer_id, 
+	   SUM(CASE WHEN exclusions != '' OR extras != '' THEN 1
+           ELSE 0 END) AS at_least_1_change,
+       SUM(CASE WHEN exclusions = '' AND extras = '' THEN 1
+           ELSE 0 END) AS no_change
+FROM pizza_runner.runner_orders_transformed rot
+LEFT JOIN pizza_runner.customer_orders_transformed cot
+ON rot.order_id = cot.order_id
+WHERE rot.distance != ''
+GROUP BY cot.customer_id
+ORDER BY cot.customer_id
+````
+**Answer:**
+| customer_id | at_least_1_change | count_pizza |
+| ----------- | ------------------| ----------- |
+| 101         | 0                 | 2           |
+| 102         | 0                 | 3           |
+| 103         | 3                 | 0           |
+| 104         | 2                 | 1           |
+| 105         | 1                 | 0           |
+
+### 8. How many pizzas were delivered that had both exclusions and extras?
+````sql
+SELECT  
+	   SUM(CASE WHEN exclusions != '' AND extras != '' THEN 1
+           ELSE 0 END) AS both_exclusions_extras
+FROM runner_orders_transformed rot
+LEFT JOIN customer_orders_transformed cot
+ON rot.order_id = cot.order_id
+WHERE rot.distance != ''
+````
+**Answer:**
+| both_exclusions_extras |  
+| ---------------------- | 
+| 1	                   | 
+
+### 9. What was the total volume of pizzas ordered for each hour of the day?
+````sql
+
+### 10. What was the volume of orders for each day of the week?
+
