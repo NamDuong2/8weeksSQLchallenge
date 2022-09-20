@@ -146,6 +146,34 @@ WHERE rot.distance != ''
 
 ### 9. What was the total volume of pizzas ordered for each hour of the day?
 ````sql
-
+SELECT EXTRACT(HOUR from cot.order_time) hour_time,
+	   COUNT(cot.pizza_id) volume
+FROM customer_orders_transformed cot
+GROUP BY EXTRACT(HOUR from cot.order_time)
+ORDER BY EXTRACT(HOUR from cot.order_time)
+````
+**Answer:**
+| hour_time   | volume |
+| ----------- | -------| 
+| 11          | 1      | 
+| 13          | 3      | 
+| 18          | 3      | 
+| 19          | 1      | 
+| 21          | 3      |
+| 23          | 3      | 
 ### 10. What was the volume of orders for each day of the week?
+````sql
+SELECT to_char(cot.order_time, 'Day') day_of_week,
+	   COUNT(DISTINCT cot.order_id) orders_volume
+FROM customer_orders_transformed cot
+GROUP BY to_char(cot.order_time, 'Day')
+````
+**Answer:**
+| day_of_week | orders_volume |
+| ----------- | --------------| 
+| Friday      | 1      	      |  
+| Saturday    | 2      	      | 
+| Thursday    | 2      	      | 
+| Wednesday   | 5             | 
+
 
